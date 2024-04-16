@@ -43,6 +43,15 @@ cp .env.template .env
 vi .env
 ```
 
+
+###### chmod
+
+```bash
+# Allow to read and write data.
+chmod -R 777 grafana_data/
+chmod -R 777 prometheus_data/
+```
+
 # Deploy
 
 ##### Option 1: Requires traefik (RECOMMENDED)
