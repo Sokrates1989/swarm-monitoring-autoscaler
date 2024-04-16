@@ -3,11 +3,6 @@ version: "3.9"
 services:
   grafana:
     image: portainer/template-swarm-monitoring:grafana-9.5.2
-    ports:
-      - target: 3000
-        published: 3000
-        protocol: tcp
-        mode: ingress
     secrets:
       - "SWARM_MONITORING_GRAFANA_PASSWORD"
     deploy:
