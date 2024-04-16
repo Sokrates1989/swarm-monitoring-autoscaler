@@ -1,0 +1,10 @@
+# Ignore data of grafana.
+grafana_data/*
+prometheus_data/*
+
+# Ignore config file.
+.env
+
+# Keep .gitkeep files to ensure that the empty folder should be created/ exists.
+!grafana_data/.gitkeep
+!prometheus_data/.gitkeep
