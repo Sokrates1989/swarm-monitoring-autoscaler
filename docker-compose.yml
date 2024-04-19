@@ -26,7 +26,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_PASSWORD
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
-      - net    
+      - monitoring    
 
   prometheus:
     image: portainer/template-swarm-monitoring:prometheus-v2.44.0
@@ -46,8 +46,11 @@ services:
       - type: bind
         source: ${DATA_ROOT}/prometheus_data
         target: /prometheus
+      - type: bind
+        source: ${DATA_ROOT}/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
     networks:
-      - net
+      - monitoring
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.0
@@ -81,7 +84,7 @@ services:
         target: /dev/disk
         read_only: true                        
     networks:
-      - net
+      - monitoring
 
   node-exporter:
     image: prom/node-exporter:v1.5.0
@@ -111,10 +114,30 @@ services:
         target: /host/sys
         read_only: true
     networks:
-      - net
+      - monitoring
+
+    
+  autoscaler:
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.0.7
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA_ROOT}/logs:/code/logs
+    networks:
+      - monitoring
+    secrets:
+      - "SWARM_AUTOSCALER_TOKEN"
+    environment:
+      AUTH_TOKEN_FILE: /run/secrets/SWARM_AUTOSCALER_TOKEN
+    deploy:
+      replicas: 1
+      restart_policy: 
+        condition: none
+      placement:
+        constraints:
+          - node.role == manager
 
 networks:
-  net:
+  monitoring:
     driver: overlay
 
 secrets:
