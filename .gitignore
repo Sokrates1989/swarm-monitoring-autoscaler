@@ -8,3 +8,16 @@ prometheus_data/*
 # Keep .gitkeep files to ensure that the empty folder should be created/ exists.
 !grafana_data/.gitkeep
 !prometheus_data/.gitkeep
+
+
+# Ignore everything in the autoscaler_logs directory.
+autoscaler_logs/*
+# But keep the autoscaler_logs directory itself.
+!autoscaler_logs/.gitkeep
+
+# Ignore everything in the dayBased directory.
+autoscaler_logs/dayBased/*
+# But keep the dayBased directory itself.
+!autoscaler_logs/dayBased/
+# And keep the .gitkeep file inside dayBased if you have one.
+!autoscaler_logs/dayBased/.gitkeep
