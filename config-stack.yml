@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+
   grafana:
     image: portainer/template-swarm-monitoring:grafana-9.5.2
     ports:
@@ -34,6 +35,29 @@ services:
     networks:
       - monitoring    
 
+
+  autoscaler:
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.1.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA_ROOT}/autoscaler_logs:/code/logs
+    networks:
+      - monitoring
+    deploy:
+      labels:
+        # Cronjob to run this service every 15 seconds.
+        # Only works in combination with https://github.com/crazy-max/swarm-cronjob or https://github.com/Sokrates1989/swarm-cronjob.git.
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=*/15 * * * * *"
+        - "swarm.cronjob.skip-running=false"
+      replicas: 0
+      restart_policy: 
+        condition: none
+      placement:
+        constraints:
+          - node.role == manager
+
+
   prometheus:
     image: portainer/template-swarm-monitoring:prometheus-v2.44.0
     command:
@@ -57,6 +81,7 @@ services:
         target: /etc/prometheus/prometheus.yml
     networks:
       - monitoring
+
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.47.0
@@ -92,6 +117,7 @@ services:
     networks:
       - monitoring
 
+
   node-exporter:
     image: prom/node-exporter:v1.5.0
     command:
@@ -123,25 +149,6 @@ services:
       - monitoring
 
     
-  autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.0.7
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${DATA_ROOT}/autoscaler_logs:/code/logs
-    networks:
-      - monitoring
-    secrets:
-      - "SWARM_AUTOSCALER_TOKEN"
-    environment:
-      AUTH_TOKEN_FILE: /run/secrets/SWARM_AUTOSCALER_TOKEN
-    deploy:
-      replicas: 1
-      restart_policy: 
-        condition: none
-      placement:
-        constraints:
-          - node.role == manager
-
 networks:
   monitoring:
     driver: overlay

@@ -24,7 +24,7 @@ For Example: grafana.felicitas-wisdom.de
 # Choose location on server (glusterfs when using multiple nodes is recommended).
 mkdir -p /gluster_storage/swarm/monitoring/monitoring
 cd /gluster_storage/swarm/monitoring/monitoring
-git clone https://github.com/Sokrates1989/swarm-monitoring.git .
+git clone https://github.com/Sokrates1989/swarm-monitoring-autoscaler.git .
 ```
 
 ##### Create secret in docker swarm
