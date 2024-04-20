@@ -29,8 +29,14 @@ git clone https://github.com/Sokrates1989/swarm-monitoring.git .
 
 ##### Create secret in docker swarm
 ```bash
+# GRAFANA LOGIN.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_GRAFANA_PASSWORD secret.txt 
+rm secret.txt
+
+# GRAFANA SMTP PASSWORD.
+vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
+docker secret create SWARM_MONITORING_GRAFANA_SMTP_PASSWORD secret.txt 
 rm secret.txt
 ```
 
