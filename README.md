@@ -56,22 +56,22 @@ chmod -R 777 prometheus_data/
 
 ##### Option 1: Requires traefik (RECOMMENDED)
 ```bash
-# Allows you to access api using the url (monitoring_URL) provided in .env.
+# Allows you to access api using the url (GRAFANA_URL) provided in .env.
 # But requires you to have traefik set up.
-docker stack deploy -c <(docker-compose -f docker-compose-traefik.yml config) monitoring
+docker stack deploy -c <(docker-compose -f config-stack-traefik.yml config) monitoring
 ```
 
 ##### Option 2: Does not require traefik, uses default ports
 ```bash
 # You can only call the api using http://<MANAGER_IP_ADDRESS>:3000/.
 # NOT ENCRYPTED / NOT RECOMMENDED / JUST FOR DEBUGGING, TESTING.
-docker stack deploy -c <(docker-compose config) monitoring
+docker stack deploy -c <(docker-compose -f config-stack.yml config) monitoring
 ```
 
 # Usage
 
 ##### Option 1: Using subdomain entered in .env / Requires traefik
-- Open Browser and enter https://monitoring.felicitas-wisdom.de (the url set for monitoring_URL in .env)
+- Open Browser and enter https://monitoring.felicitas-wisdom.de (the url set for GRAFANA_URL in .env)
 
 ##### Option 2: Using IP Address and Port / Does not require traefik
 - Retrieve IP Address of -> MANAGER_IP_ADDRESS
