@@ -5,6 +5,7 @@ services:
     image: portainer/template-swarm-monitoring:grafana-9.5.2
     secrets:
       - "SWARM_MONITORING_GRAFANA_PASSWORD"
+      - "SWARM_MONITORING_GRAFANA_SMTP_PASSWORD"
     deploy:
       labels:
         - traefik.enable=true
@@ -28,6 +29,10 @@ services:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_PASSWORD
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SMTP_ENABLED=${GRAFANA_SMTP_ENABLED}
+      - GF_SMTP_HOST=${GRAFANA_SMTP_HOST}
+      - GF_SMTP_USER=${GRAFANA_SMTP_USER}
+      - GF_SMTP_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_SMTP_PASSWORD
     networks:
       - monitoring 
       - traefik    
@@ -156,6 +161,8 @@ networks:
 
 secrets:
   "SWARM_MONITORING_GRAFANA_PASSWORD":
+    external: true
+  "SWARM_MONITORING_GRAFANA_SMTP_PASSWORD":
     external: true
   "SWARM_AUTOSCALER_TOKEN":
     external: true
