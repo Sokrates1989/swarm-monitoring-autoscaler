@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   grafana:
-    image: portainer/template-swarm-monitoring:grafana-9.5.2
+    image: grafana/grafana:10.4.2
     ports:
       - target: 3000
         published: 3000
@@ -59,7 +59,7 @@ services:
 
 
   prometheus:
-    image: portainer/template-swarm-monitoring:prometheus-v2.44.0
+    image: prom/prometheus:v2.51.2
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--log.level=error'
@@ -84,7 +84,7 @@ services:
 
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     command: -logtostderr -docker_only
     deploy:
       mode: global
@@ -119,7 +119,7 @@ services:
 
 
   node-exporter:
-    image: prom/node-exporter:v1.5.0
+    image: prom/node-exporter:v1.7.0
     command:
       - '--path.sysfs=/host/sys'
       - '--path.procfs=/host/proc'
