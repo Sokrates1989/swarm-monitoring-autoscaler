@@ -1,12 +1,18 @@
-# Ignore data of grafana.
+# Ignore grafana data, but keep directory itself (by keeping .gitkeep file)
 grafana_data/*
-prometheus_data/*
+!grafana_data/.gitkeep
+# Also keep getting-started-dashboards to understand metrics easily.
+grafana_data/dashboards/*
+!grafana_data/dashboards/
+!grafana_data/dashboards/grafana-dashboard-container-metrics.json
+!grafana_data/dashboards/grafana-dashboard-node-metrics.json
+!grafana_data/dashboards/grafana-dashboard-service-metrics.json
 
 # Ignore config file.
 .env
 
-# Keep .gitkeep files to ensure that the empty folder should be created/ exists.
-!grafana_data/.gitkeep
+# Ignore prometheus data, but keep directory itself (by keeping .gitkeep file)
+prometheus_data/*
 !prometheus_data/.gitkeep
 
 
