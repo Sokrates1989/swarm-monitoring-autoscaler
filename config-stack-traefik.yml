@@ -26,6 +26,9 @@ services:
       - type: bind
         source: ${DATA_ROOT}/grafana_data
         target: /var/lib/grafana
+      - type: bind
+        source: ${DATA_ROOT}/grafana_initial_dashboards
+        target: /etc/grafana/provisioning/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_PASSWORD

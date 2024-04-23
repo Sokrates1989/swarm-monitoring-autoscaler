@@ -1,29 +1,22 @@
 # Ignore grafana data, but keep directory itself (by keeping .gitkeep file)
 grafana_data/*
 !grafana_data/.gitkeep
-# Also keep getting-started-dashboards to understand metrics easily.
-grafana_data/dashboards/*
-!grafana_data/dashboards/
-!grafana_data/dashboards/grafana-dashboard-container-metrics.json
-!grafana_data/dashboards/grafana-dashboard-node-metrics.json
-!grafana_data/dashboards/grafana-dashboard-service-metrics.json
-
-# Ignore config file.
-.env
 
 # Ignore prometheus data, but keep directory itself (by keeping .gitkeep file)
 prometheus_data/*
 !prometheus_data/.gitkeep
 
-
 # Ignore everything in the autoscaler_logs directory.
 autoscaler_logs/*
 # But keep the autoscaler_logs directory itself.
 !autoscaler_logs/.gitkeep
-
 # Ignore everything in the dayBased directory.
 autoscaler_logs/dayBased/*
 # But keep the dayBased directory itself.
 !autoscaler_logs/dayBased/
 # And keep the .gitkeep file inside dayBased if you have one.
 !autoscaler_logs/dayBased/.gitkeep
+
+
+# Ignore config file.
+.env
