@@ -26,9 +26,9 @@ services:
       - type: bind
         source: ${DATA_ROOT}/grafana_data
         target: /var/lib/grafana
-      - type: bind
-        source: ${DATA_ROOT}/grafana_initial_dashboards
-        target: /etc/grafana/provisioning/dashboards
+      # - type: bind
+      #   source: ${DATA_ROOT}/grafana_initial_dashboards
+      #   target: /etc/grafana/provisioning/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_PASSWORD
@@ -45,7 +45,7 @@ services:
 
       
   autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.1.0
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.1.16
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA_ROOT}/autoscaler_logs:/code/logs
