@@ -24,8 +24,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "ddjmsdx1hzj0gf"
+        "type": "prometheus"
       },
       "description": "Shows cpu usage of services based on 30 second average. \nYou can change the prometheus query at [30s], if you want to edit autoscale.cpu_upscale_time_duration. \nUse this link to see what to enter instead of [30s]: https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
@@ -104,8 +103,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "ddjmsdx1hzj0gf"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~'.+'}[30s])) BY (container_label_com_docker_swarm_service_name) * 100",
@@ -120,8 +118,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "ddjmsdx1hzj0gf"
+        "type": "prometheus"
       },
       "description": "Shows cpu usage of services based on 5 minute average. \nYou can change the prometheus query at [5m], if you want to edit autoscale.cpu_downscale_time_duration. \nUse this link to see what to enter instead of [5m]: https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
@@ -200,8 +197,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "ddjmsdx1hzj0gf"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_task_name=~'.+'}[5m])) BY (container_label_com_docker_swarm_service_name) * 100",
@@ -216,8 +212,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "ddjmsdx1hzj0gf"
+        "type": "prometheus"
       },
       "description": "Shows memory usage of services based on 30 seconds average. You can change the prometheus query at [30s], if you want to edit autoscale.memory_upscale_time_duration.",
       "fieldConfig": {
@@ -296,8 +291,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "ddjmsdx1hzj0gf"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(container_memory_usage_bytes{container_label_com_docker_swarm_task_name=~'.+'}[30s])) BY (container_label_com_docker_swarm_service_name)",
@@ -312,8 +306,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "ddjmsdx1hzj0gf"
+        "type": "prometheus"
       },
       "description": "Shows memory usage of services based on 5 minute average. You can change the prometheus query at [5m], if you want to edit autoscale.memory_downscale_time_duration.",
       "fieldConfig": {
@@ -392,8 +385,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "ddjmsdx1hzj0gf"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "expr": "avg(rate(container_memory_usage_bytes{container_label_com_docker_swarm_task_name=~'.+'}[5m])) BY (container_label_com_docker_swarm_service_name)",
