@@ -2,6 +2,28 @@ version: "3.9"
 
 services:
 
+  autoscaler:
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.1.16
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA_ROOT}/autoscaler_logs:/code/logs
+    networks:
+      - monitoring
+    deploy:
+      labels:
+        # Cronjob to run this service every 15 seconds.
+        # Only works in combination with https://github.com/crazy-max/swarm-cronjob or https://github.com/Sokrates1989/swarm-cronjob.git.
+        - "swarm.cronjob.enable=true"
+        - "swarm.cronjob.schedule=*/15 * * * * *"
+        - "swarm.cronjob.skip-running=false"
+      replicas: 0
+      restart_policy: 
+        condition: none
+      placement:
+        constraints:
+          - node.role == manager
+
+
   grafana:
     image: grafana/grafana:10.4.2
     secrets:
@@ -47,28 +69,6 @@ services:
     networks:
       - monitoring 
       - traefik 
-
-      
-  autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.1.16
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${DATA_ROOT}/autoscaler_logs:/code/logs
-    networks:
-      - monitoring
-    deploy:
-      labels:
-        # Cronjob to run this service every 15 seconds.
-        # Only works in combination with https://github.com/crazy-max/swarm-cronjob or https://github.com/Sokrates1989/swarm-cronjob.git.
-        - "swarm.cronjob.enable=true"
-        - "swarm.cronjob.schedule=*/15 * * * * *"
-        - "swarm.cronjob.skip-running=false"
-      replicas: 0
-      restart_policy: 
-        condition: none
-      placement:
-        constraints:
-          - node.role == manager
 
 
   prometheus:
