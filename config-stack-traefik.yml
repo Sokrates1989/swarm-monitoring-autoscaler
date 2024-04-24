@@ -26,9 +26,14 @@ services:
       - type: bind
         source: ${DATA_ROOT}/grafana_data
         target: /var/lib/grafana
-      # - type: bind
-      #   source: ${DATA_ROOT}/grafana_initial_dashboards
-      #   target: /etc/grafana/provisioning/dashboards
+      - type: bind
+        source: ${DATA_ROOT}/grafana_config/dashboards.yml
+        target: /etc/grafana/provisioning/dashboards/provisioning-dashboards.yaml
+        read_only: true
+      - type: bind
+        source: ${DATA_ROOT}/grafana_config/datasources.yml
+        target: /etc/grafana/provisioning/datasources/provisioning-datasources.yaml
+        read_only: true
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/SWARM_MONITORING_GRAFANA_PASSWORD
