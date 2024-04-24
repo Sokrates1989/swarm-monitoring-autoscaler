@@ -5,6 +5,8 @@ grafana_data/*
 grafana_data/dashboards/*
 !grafana_data/dashboards/
 !grafana_data/dashboards/grafana-dashboard-autoscaler-metrics.json
+!grafana_data/dashboards/grafana-dashboard-container-metrics.json
+!grafana_data/dashboards/grafana-dashboard-node-metrics.json
 
 # Ignore config file.
 .env
