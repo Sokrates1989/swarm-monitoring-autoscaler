@@ -26,7 +26,7 @@
       "datasource": {
         "type": "prometheus"
       },
-      "description": "Shows cpu usage of services based on 30 second average. \nYou can change the prometheus query at [30s], if you want to edit autoscale.cpu_upscale_time_duration. \nUse this link to see what to enter instead of [30s]: https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
+      "description": "Shows cpu usage of services based on 30 second average. \nYou can change the prometheus query at [30s], if you want to edit autoscale.cpu_upscale_time_duration. \nUse this link to see what to enter instead of [30s] (Must be a multiplier of [30s]): https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -120,7 +120,7 @@
       "datasource": {
         "type": "prometheus"
       },
-      "description": "Shows cpu usage of services based on 5 minute average. \nYou can change the prometheus query at [5m], if you want to edit autoscale.cpu_downscale_time_duration. \nUse this link to see what to enter instead of [5m]: https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
+      "description": "Shows cpu usage of services based on 5 minute average. \nYou can change the prometheus query at [5m], if you want to edit autoscale.cpu_downscale_time_duration. \nUse this link to see what to enter instead of [5m] (Must be a multiplier of [30s]): https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -214,7 +214,7 @@
       "datasource": {
         "type": "prometheus"
       },
-      "description": "Shows memory usage of services based on 30 seconds average. You can change the prometheus query at [30s], if you want to edit autoscale.memory_upscale_time_duration.",
+      "description": "Shows memory usage of services based on 30 seconds average. You can change the prometheus query at [30s], if you want to edit autoscale.memory_upscale_time_duration. \nUse this link to see what to enter instead of [30s] (Must be a multiplier of [30s]): https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -308,7 +308,7 @@
       "datasource": {
         "type": "prometheus"
       },
-      "description": "Shows memory usage of services based on 5 minute average. You can change the prometheus query at [5m], if you want to edit autoscale.memory_downscale_time_duration.",
+      "description": "Shows memory usage of services based on 5 minute average. You can change the prometheus query at [5m], if you want to edit autoscale.memory_downscale_time_duration. \nUse this link to see what to enter instead of [5m] (Must be a multiplier of [30s]): https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations",
       "fieldConfig": {
         "defaults": {
           "color": {
