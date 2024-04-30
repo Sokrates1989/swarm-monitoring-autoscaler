@@ -7,6 +7,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA_ROOT}/autoscaler_logs:/code/logs
+    environment:
+      - LOG_LEVEL=${AUTOSCALER_GLOBAL_LOG_LEVEL}
+      - LOG_STYLE=${AUTOSCALER_LOG_STYLE}
     networks:
       - monitoring
     deploy:
@@ -22,6 +25,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+          # If you cannot or do not want to use glusterfs or ceph: 
+          # Set a label named "monitoring" with the value "true" on the node that you want to have autoscaler, grafana and prometheus running on.
+          # REMEMBER, that if that node fails also autoscaler, grafana and prometheus will fail.
+          # View README.md for more info about creating that label.
+          # - node.labels.monitoring == true
 
 
   grafana:
@@ -44,6 +52,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+          # If you cannot or do not want to use glusterfs or ceph: 
+          # Set a label named "monitoring" with the value "true" on the node that you want to have autoscaler, grafana and prometheus running on.
+          # REMEMBER, that if that node fails also autoscaler, grafana and prometheus will fail.
+          # View README.md for more info about creating that label.
+          # - node.labels.monitoring == true
     volumes:
       - type: bind
         source: ${DATA_ROOT}/grafana_data
@@ -85,6 +98,11 @@ services:
       placement:
         constraints:
           - node.role == manager
+          # If you cannot or do not want to use glusterfs or ceph: 
+          # Set a label named "monitoring" with the value "true" on the node that you want to have grafana and prometheus running on.
+          # REMEMBER, that if that node fails also grafana and prometheus will fail.
+          # View README.md for more info about creating that label.
+          # - node.labels.monitoring == true
     volumes:
       - type: bind
         source: ${DATA_ROOT}/prometheus_data
