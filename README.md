@@ -1,25 +1,115 @@
-# swarm-monitoring
-Bundle of monitoring packages for docker swarm environments
+# swarm-monitoring-autoscaler
+Bundle of monitoring packages for docker swarm environments with autoscaler to scale your swarm services based on cpu or memory consumption
 
 
-# Prerequisisties
-On a multi-master environment you MUST install glusterfs to make prometheus and grafana data be kept accross all nodes.
+## Table of contents
+1. [Included packages](#included-packages)
+2. [Prerequisites](#prerequisites)
+   - [If on a multiple master swarm](#if-on-a-swarm-cluster-with-multiple-masters)
+     - [Option1: Glusterfs or any other distributed, arbitrarily scalable file system like Ceph (recommended)](#option1-glusterfs-or-any-other-distributed-arbitrarily-scalable-file-system-like-ceph-recommended)
+     - [Option2: Constrain deployment to a specific node](#option2-constrain-deployment-to-a-specific-node)
+   - [Optional: Traefik (recommended)](#optional-traefik-recommended)
+3. [First Setup](#first-setup)
+4. [Deploy](#deploy)
+5. [Usage](#usage)
+   - [AutoScaler](#autoscaler)
+   - [Grafana](#grafana)
+     - [View Autoscaler Metrics](#view-autoscaler-metrics)
+     - [Dashboards](#dashboards)
 
-Otherwise look at portainer installation https://www.portainer.io/blog/monitoring-a-swarm-cluster-with-prometheus-and-grafana
+
+# Included Packages
+- autoscaler
+  - Scale swarm services based on cpu/memory consumption
+- grafana 
+  - Visualize your swarm's metrics, optimized for autoscaler with various helpful pre-built dashboards
+- prometheus 
+  - API for metric data (Gets data from cadvisor and node-exporter and provides them for grafana and autoscaler)
+- cadvisor
+  - Fetches metrics from swarm services/ containers
+- node-exporter
+  - Monitors the host system
+
+
+# Prerequisites
+## If on a swarm cluster with multiple masters
+
+### Option1: Glusterfs or any other distributed, arbitrarily scalable file system like Ceph (recommended)
+
+!! This is recommended to avoid a single point of failure causing autoscaler, grafana and prometheus to go down !!
+
+On a multi-master environment: Install glusterfs to make autoscaler, prometheus and grafana data be kept accross all nodes.
+- https://docs.techdox.nz/glusterfs/#
+- https://docs.gluster.org/en/main/Install-Guide/Install/
+- https://docs.gluster.org/en/main/
+
+
+### Option2: Constrain deployment to a specific node
+
+!! Keep in mind, that if that node fails, also prometheus and grafana in the whole cluster will not work !!
+
+Setup deploy constraints to run grafana and prometheus only on one specific node. 
+
+#### Label creation
+
+```bash
+# Get nodeID on which you want to deploy grafana and prometheus on.
+docker node ls
+
+# Set label on that node.
+docker node update --label-add monitoring=true <nodeID_withManyNumbersAndLetters>
+
+# Verify, that label is set correctly.
+docker node ls -q | xargs docker node inspect --format '{{ .ID }} [{{ .Description.Hostname }}]: {{ .Spec.Labels }}'
+
+# OPTIONAL/ JUST INFO: In case you want to remove label/ change monitoring node / ...
+docker node update --label-rm <label_key> <nodeID_withManyNumbersAndLetters>
+docker node update --label-rm monitoring <nodeID_withManyNumbersAndLetters>
+```
+
+#### Deploy on monitoring node
+Make sure to [setup repo](#setup-repo-at-desired-location) on the node where you just set the monitoring label on
+
+#### Uncomment monitoring label
+When you get to [deploy section](#deploy) -> edit config-stack.yml or config-stack-traefik.yml 
+```bash
+# If you want to use traefik.
+vi config-stack-traefik.yml
+
+# If you do not want to use traefik.
+vi config-stack.yml
+```
+
+look for 
+```text
+        # - node.labels.monitoring == true
+```
+and remove "# " so that it look like below. Make sure "-" is in same vertical place as other labels.
+```text
+        - node.role == manager
+        ...
+        - node.labels.monitoring == true
+```
+
+
+## Optional: Traefik (recommended)
+If you want to access grafana with its own subdomain and via HTTPS. It is recommended, because otherwise you access grafana with a published port and insecurely (HTTP)
+- https://traefik.io/traefik/
+- https://github.com/traefik/traefik
+- https://github.com/Sokrates1989/swarm_traefik
 
 # First Setup
 
 ### Subdomain
 
 ```text
-If you want to use traefik:
+If you want to use grafana with subdomain in combination with traefik:
 Make sure that subdomain exist and points to manager of swarm.
 For Example: grafana.felicitas-wisdom.de
 ```
 
 
-##### Setup repo at desired location
-
+### Setup repo at desired location
 ```bash
 # Choose location on server (glusterfs when using multiple nodes is recommended).
 mkdir -p /gluster_storage/swarm/administration/monitoring-autoscaler
@@ -27,7 +117,7 @@ cd /gluster_storage/swarm/administration/monitoring-autoscaler
 git clone https://github.com/Sokrates1989/swarm-monitoring-autoscaler.git .
 ```
 
-##### Create secret in docker swarm
+### Create secret in docker swarm
 ```bash
 # GRAFANA LOGIN.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
@@ -40,7 +130,7 @@ docker secret create SWARM_MONITORING_GRAFANA_SMTP_PASSWORD secret.txt
 rm secret.txt
 ```
 
-##### Configuration
+### Configuration
 ```bash
 # Copy ".env.template" to ".env".
 cp .env.template .env
@@ -50,7 +140,7 @@ vi .env
 ```
 
 
-###### chmod
+#### chmod
 
 ```bash
 # Allow to read and write data.
@@ -60,14 +150,14 @@ chmod -R 777 prometheus_data/
 
 # Deploy
 
-##### Option 1: Requires traefik (RECOMMENDED)
+#### Option 1: Requires traefik (RECOMMENDED)
 ```bash
 # Allows you to access api using the url (GRAFANA_URL) provided in .env.
 # But requires you to have traefik set up.
 docker stack deploy -c <(docker-compose -f config-stack-traefik.yml config) monitoring-autoscaler
 ```
 
-##### Option 2: Does not require traefik, uses default ports
+#### Option 2: Does not require traefik, uses default ports
 ```bash
 # You can only call the api using http://<MANAGER_IP_ADDRESS>:3000/.
 # NOT ENCRYPTED / NOT RECOMMENDED / JUST FOR DEBUGGING, TESTING.
@@ -76,10 +166,125 @@ docker stack deploy -c <(docker-compose -f config-stack.yml config) monitoring-a
 
 # Usage
 
+## AutoScaler
+
+When deploying a service to your swarm you add labels to the deploy section of your stack.yml
+
+Short info
+```yaml
+version: "3.9"
+
+services:
+ your_service:
+    image: ...
+    ...
+    deploy:
+      labels:
+        ...
+        PLACE YOUR LABELS HERE
+        
+        # Basic labels below.
+
+        # Enable autoscaling for your service.
+        - "autoscale=true"
+
+        # How many replicas do you want?
+        - "autoscale.minimum_replicas=1"
+        - "autoscale.maximum_replicas=3"
+
+        # What do you want to base scaling on?
+
+        # CPU?
+        - "autoscale.cpu_upscale_threshold=80"
+        - "autoscale.cpu_upscale_time_duration=2m"
+        - "autoscale.cpu_downscale_threshold=20"
+        - "autoscale.cpu_downscale_time_duration=5m"
+
+        # Or Memory? (or even both?) 
+        - "autoscale.memory_upscale_threshold=" 
+        - "autoscale.memory_upscale_time_duration=2m" 
+        - "autoscale.memory_downscale_threshold=" 
+        - "autoscale.memory_downscale_time_duration=5m" 
+
+        # What do you want to do if one metric says scale down and the other says scale up/ otherwise?
+        - "autoscale.scaling_conflict_resolution=scale_up"
+
+        # Service based custom log level.
+        - "autoscale.log_level=INFO"
+
+        # For more info read below full explanation.
+        ...
+    ...
+```
+
+
+Full explanation
+```yaml
+version: "3.9"
+
+services:
+ your_service:
+    image: ...
+    ...
+    deploy:
+      labels:
+        ...
+        # Autoscaling (works in combination with prometheus, grafana, cadvisor and own autoscaler).
+        - "autoscale=true" # Must be set to true to enable autoscaling
+        - "autoscale.minimum_replicas=1" # The minimum amount of replicas you want to keep at least (integer, min 1)
+        - "autoscale.maximum_replicas=3" # The maximum amount of replicas you want to scale up to (integer)
+        - "autoscale.cpu_upscale_threshold=80" # When average service cpu of the last 30 seconds (autoscale.cpu_upscale_time_duration) rises above this level -> scale up (Look at Grafana to retreive current cpu avg to get a grasp of cpu consumption over time duration)
+        - "autoscale.cpu_upscale_time_duration=2m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu upscaling on. To react more quickly to increases of of cpu load it should be shorter than cpu_downscale_time_duration. Should be a multiplier of 30s.
+        - "autoscale.cpu_downscale_threshold=20" # When average service cpu of the last 5 minutes (autoscale.cpu_downscale_time_duration) sinks below this level -> scale down (Look at Grafana to retreive current cpu avg to get a grasp of levels)
+        - "autoscale.cpu_downscale_time_duration=5m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu downscaling on. To avoid downscaling too early it should be longer than cpu_upscale_time_duration. Should be a multiplier of 30s.
+        - "autoscale.memory_upscale_threshold=" # When avg memory consumption of the last 30 seconds rises above this level -> scale up (Look at Grafana to retreive current memory avg to get a grasp of levels)
+        - "autoscale.memory_upscale_time_duration=2m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of memory upscaling on. To react more quickly to increases of of memory load it should be shorter than memory_downscale_time_duration. Should be a multiplier of 30s.
+        - "autoscale.memory_downscale_threshold=" # When avg memory consumption of the last 5 minutes sinks below this level -> scale down(Look at Grafana to retreive current memory avg to get a grasp of levels)
+        - "autoscale.memory_downscale_time_duration=5m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of memory downscaling on. To avoid downscaling too early it should be longer than memory_upscale_time_duration. Should be a multiplier of 30s.
+        - "autoscale.scaling_conflict_resolution=scale_up" # (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
+        - "autoscale.log_level=INFO"  # (INFO | VERBOSE | WARNING_AND_ERRORS_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
+        ...
+    ...
+```
+
+## Grafana
+
+### Access using browser 
+
 ##### Option 1: Using subdomain entered in .env / Requires traefik
-- Open Browser and enter https://grafana.felicitas-wisdom.de (the url set for GRAFANA_URL in .env)
+- Open Browser and enter https://GRAFANA_URL (the url you set for GRAFANA_URL in .env)
 
 ##### Option 2: Using IP Address and Port / Does not require traefik
 - Retrieve IP Address of -> MANAGER_IP_ADDRESS
 - Open Browser and enter http://<MANAGER_IP_ADDRESS>:3000/
 - In case of Errors: Ensure, that port 3000 is accessible
+
+### Login 
+Login using GRAFANA_USER provided in .env and the secret SWARM_MONITORING_GRAFANA_PASSWORD created beforehand
+
+### View Autoscaler Metrics
+ - Head over to Dashboards in the left menu and select the Autoscaler Metrics Dashboard. 
+ - Here you can see the cpu and memory consumption of your services.
+ - Based on that data, you can easily setup the autoscaler threshold values.
+
+### Dashboards and Alerts
+#### Dashboards
+There are 3 dashboards pre-created for your convenience:
+ - Autoscaler Metrics
+   - information about your services using data from cadvisor via prometheus
+   - quickly view the metrics needed to scale your services for autoscaler
+ - Container Metrics
+   - information about your containers also using data from cadvisor via prometheus
+ - Node Metrics
+   - information about your host machines using data from node-exporter via prometheus
+
+#### Alerts from dashboard panels
+If you want to be informed, if any metric you see on the dashboard changes above or below a certain value, you can directly create an alert rule from that panel. Click on the context menu of the panel (top right hand corner) and select "New alert rule" (in sub-menu "More...")
+
+### More information about Grafana
+ - https://grafana.com/
+ - https://grafana.com/docs/grafana/latest/
+ - https://grafana.com/docs/grafana/latest/introduction/
+ - https://grafana.com/docs/grafana/latest/dashboards/
+ - https://grafana.com/docs/grafana/latest/panels-visualizations/
+ - https://grafana.com/docs/grafana/latest/alerting/
