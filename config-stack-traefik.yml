@@ -10,6 +10,7 @@ services:
     environment:
       - LOG_LEVEL=${AUTOSCALER_GLOBAL_LOG_LEVEL}
       - LOG_STYLE=${AUTOSCALER_LOG_STYLE}
+      - TIMEZONE=${AUTOSCALER_TIMEZONE}
     networks:
       - monitoring
     deploy:
