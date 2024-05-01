@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.2.0
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.3.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA_ROOT}/autoscaler_logs:/code/logs
