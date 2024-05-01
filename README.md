@@ -202,9 +202,7 @@ services:
 
         # Or Memory? (or even both?) 
         - "autoscale.memory_upscale_threshold=" 
-        - "autoscale.memory_upscale_time_duration=2m" 
         - "autoscale.memory_downscale_threshold=" 
-        - "autoscale.memory_downscale_time_duration=5m" 
 
         # What do you want to do if one metric says scale down and the other says scale up/ otherwise?
         - "autoscale.scaling_conflict_resolution=scale_up"
@@ -233,14 +231,12 @@ services:
         - "autoscale=true" # Must be set to true to enable autoscaling
         - "autoscale.minimum_replicas=1" # The minimum amount of replicas you want to keep at least (integer, min 1)
         - "autoscale.maximum_replicas=3" # The maximum amount of replicas you want to scale up to (integer)
-        - "autoscale.cpu_upscale_threshold=80" # When average service cpu of the last 30 seconds (autoscale.cpu_upscale_time_duration) rises above this level -> scale up (Look at Grafana to retreive current cpu avg to get a grasp of cpu consumption over time duration)
+        - "autoscale.cpu_upscale_threshold=80" # When average service cpu of the last 2 minutes (autoscale.cpu_upscale_time_duration) rises above this level -> scale up (Look at Grafana to retrieve current cpu avg to get a grasp of cpu consumption over time duration)
         - "autoscale.cpu_upscale_time_duration=2m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu upscaling on. To react more quickly to increases of of cpu load it should be shorter than cpu_downscale_time_duration. Should be a multiplier of 30s.
-        - "autoscale.cpu_downscale_threshold=20" # When average service cpu of the last 5 minutes (autoscale.cpu_downscale_time_duration) sinks below this level -> scale down (Look at Grafana to retreive current cpu avg to get a grasp of levels)
+        - "autoscale.cpu_downscale_threshold=20" # When average service cpu of the last 5 minutes (autoscale.cpu_downscale_time_duration) sinks below this level -> scale down (Look at Grafana to retrieve current cpu avg to get a grasp of levels)
         - "autoscale.cpu_downscale_time_duration=5m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu downscaling on. To avoid downscaling too early it should be longer than cpu_upscale_time_duration. Should be a multiplier of 30s.
-        - "autoscale.memory_upscale_threshold=" # When avg memory consumption of the last 30 seconds rises above this level -> scale up (Look at Grafana to retreive current memory avg to get a grasp of levels)
-        - "autoscale.memory_upscale_time_duration=2m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of memory upscaling on. To react more quickly to increases of of memory load it should be shorter than memory_downscale_time_duration. Should be a multiplier of 30s.
-        - "autoscale.memory_downscale_threshold=" # When avg memory consumption of the last 5 minutes sinks below this level -> scale down(Look at Grafana to retreive current memory avg to get a grasp of levels)
-        - "autoscale.memory_downscale_time_duration=5m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of memory downscaling on. To avoid downscaling too early it should be longer than memory_upscale_time_duration. Should be a multiplier of 30s.
+        - "autoscale.memory_upscale_threshold=" # When memory consumption rises above this level -> scale up (Look at Grafana to retrieve current memory metrics to get a grasp of levels)
+        - "autoscale.memory_downscale_threshold=" # When memory consumption of  sinks below this level -> scale down(Look at Grafana to retrieve current memory metrics to get a grasp of levels)
         - "autoscale.scaling_conflict_resolution=scale_up" # (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
         - "autoscale.log_level=INFO"  # (INFO | VERBOSE | WARNING_AND_ERRORS_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
         ...
