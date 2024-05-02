@@ -5,6 +5,7 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 ## Table of contents
 1. [Included packages](#included-packages)
 2. [Prerequisites](#prerequisites)
+   - [Swarm Cronjobs](#swarm-cronjobs)
    - [If on a multiple master swarm](#if-on-a-swarm-cluster-with-multiple-masters)
      - [Option1: Glusterfs or any other distributed, arbitrarily scalable file system like Ceph (recommended)](#option1-glusterfs-or-any-other-distributed-arbitrarily-scalable-file-system-like-ceph-recommended)
      - [Option2: Constrain deployment to a specific node](#option2-constrain-deployment-to-a-specific-node)
@@ -32,6 +33,15 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 
 
 # Prerequisites
+## Swarm Cronjobs
+To make autoscaler run every 15 seconds (default, can be customized in .env) deploy https://github.com/crazy-max/swarm-cronjob or another way to implement peridical launch of services.
+
+Implementation help can be found at https://github.com/Sokrates1989/swarm-cronjob.git.
+
+More infromation
+ - https://crazymax.dev/swarm-cronjob/
+ - https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format
+
 ## If on a swarm cluster with multiple masters
 
 ### Option1: Glusterfs or any other distributed, arbitrarily scalable file system like Ceph (recommended)
@@ -159,7 +169,7 @@ docker stack deploy -c <(docker-compose -f config-stack-traefik.yml config) moni
 
 #### Option 2: Does not require traefik, uses default ports
 ```bash
-# You can only call the api using http://<MANAGER_IP_ADDRESS>:3000/.
+# You can only access grafana using http://<MANAGER_IP_ADDRESS>:3000/.
 # NOT ENCRYPTED / NOT RECOMMENDED / JUST FOR DEBUGGING, TESTING.
 docker stack deploy -c <(docker-compose -f config-stack.yml config) monitoring-autoscaler
 ```

@@ -18,7 +18,7 @@ services:
         # Cronjob to run this service every 15 seconds.
         # Only works in combination with https://github.com/crazy-max/swarm-cronjob or https://github.com/Sokrates1989/swarm-cronjob.git.
         - "swarm.cronjob.enable=true"
-        - "swarm.cronjob.schedule=*/15 * * * * *"
+        - "swarm.cronjob.schedule=${AUTOSCALER_SCHEDULE}"
         - "swarm.cronjob.skip-running=false"
       replicas: 0
       restart_policy: 
