@@ -14,6 +14,9 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 4. [Deploy](#deploy)
 5. [Usage](#usage)
    - [AutoScaler](#autoscaler)
+     - [Quick overview of labels](#autoscaler)
+     - [Detailed information of labels](#full-explanation)
+     - [Check Logs](#logs)
    - [Grafana](#grafana)
      - [View Autoscaler Metrics](#view-autoscaler-metrics)
      - [Dashboards](#dashboards)
@@ -178,9 +181,9 @@ docker stack deploy -c <(docker-compose -f config-stack.yml config) monitoring-a
 
 ## AutoScaler
 
-When deploying a service to your swarm you add labels to the deploy section of your stack.yml
+When deploying another new service, that you want to autoscale, you add labels to the deploy section of that service.
 
-Short info
+#### Short info
 ```yaml
 version: "3.9"
 
@@ -189,11 +192,8 @@ services:
     image: ...
     ...
     deploy:
-      labels:
+      labels: ### PLACE YOUR LABELS HERE ###
         ...
-        PLACE YOUR LABELS HERE
-        
-        # Basic labels below.
 
         # Enable autoscaling for your service.
         - "autoscale=true"
@@ -217,7 +217,7 @@ services:
         # What do you want to do if one metric says scale down and the other says scale up/ otherwise?
         - "autoscale.scaling_conflict_resolution=scale_up"
 
-        # Service based custom log level.
+        # Individual log level for this service.
         - "autoscale.log_level=INFO"
 
         # For more info read below full explanation.
@@ -226,7 +226,7 @@ services:
 ```
 
 
-Full explanation
+#### Full explanation
 ```yaml
 version: "3.9"
 
@@ -237,21 +237,78 @@ services:
     deploy:
       labels:
         ...
-        # Autoscaling (works in combination with prometheus, grafana, cadvisor and own autoscaler).
-        - "autoscale=true" # Must be set to true to enable autoscaling
-        - "autoscale.minimum_replicas=1" # The minimum amount of replicas you want to keep at least (integer, min 1)
-        - "autoscale.maximum_replicas=3" # The maximum amount of replicas you want to scale up to (integer)
+
+        ### Common and required labels ###
+
+        - "autoscale=true" # REQUIRED. Must be set to true to enable autoscaling
+        - "autoscale.minimum_replicas=1" # REQUIRED. The minimum amount of replicas you want to keep at least (integer, min 1)
+        - "autoscale.maximum_replicas=3" # REQUIRED. The maximum amount of replicas you want to scale up to (integer)
+
+
+
+        ### CPU related labels ###
+
         - "autoscale.cpu_upscale_threshold=80" # When average service cpu of the last 2 minutes (autoscale.cpu_upscale_time_duration) rises above this level -> scale up (Look at Grafana to retrieve current cpu avg to get a grasp of cpu consumption over time duration)
         - "autoscale.cpu_upscale_time_duration=2m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu upscaling on. To react more quickly to increases of of cpu load it should be shorter than cpu_downscale_time_duration. Should be a multiplier of 30s.
         - "autoscale.cpu_downscale_threshold=20" # When average service cpu of the last 5 minutes (autoscale.cpu_downscale_time_duration) sinks below this level -> scale down (Look at Grafana to retrieve current cpu avg to get a grasp of levels)
         - "autoscale.cpu_downscale_time_duration=5m" # The prometheus time duration (https://prometheus.io/docs/prometheus/latest/querying/basics/#time-durations) to base the query of cpu downscaling on. To avoid downscaling too early it should be longer than cpu_upscale_time_duration. Should be a multiplier of 30s.
+
+
+
+        ### Memory related labels ###
+
         - "autoscale.memory_upscale_threshold=" # When memory consumption rises above this level -> scale up (Look at Grafana to retrieve current memory metrics to get a grasp of levels)
         - "autoscale.memory_downscale_threshold=" # When memory consumption of  sinks below this level -> scale down(Look at Grafana to retrieve current memory metrics to get a grasp of levels)
-        - "autoscale.scaling_conflict_resolution=scale_up" # (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
-        - "autoscale.log_level=INFO"  # (INFO | VERBOSE | WARNING_AND_ERRORS_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
+
+
+
+        ### Optional settings ###
+
+        - "autoscale.scaling_conflict_resolution=scale_up" # OPTIONAL. (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
+        - "autoscale.log_level=INFO"  # OPTIONAL. (INFO | VERBOSE | WARNING_AND_ERRORS_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
+        
         ...
     ...
 ```
+
+### Logs
+
+#### Hint / Tip
+Deploy autoscale services with verbose log level to get more information or if you want to debug a potential error or want to see how the autoscaler actually works. (Remember to change back to INFO or WARNING_AND_ERRORS_ONLY in permanent production)
+```yaml
+        - "autoscale.log_level=VERBOSE"
+```
+
+#### Check Logs
+
+After having setup this stack and deployed a service with autoscale labels set, always check the logs, to ensure autoscaler is working correctly
+
+
+##### Check logs via cli
+```bash
+# Current static output of logs.
+docker service logs monitoring-autoscaler_autoscaler
+
+# Check for changes in the logs every 2 seconds.
+watch docker service logs monitoring-autoscaler_autoscaler
+```
+
+##### Check logs using files
+```bash
+# Go to src dir of log files.
+cd /gluster_storage/swarm/administration/monitoring-autoscaler/autoscaler_logs
+# Optionally go to dayBased directory.
+
+# View content of directories.
+ll # or equivalent: ls -al
+ll dayBased/ # or equivalent: ls -al dayBased/
+
+# View content of logfiles.
+vi log.txt # Opens file with editor vi.
+tail log.txt # Print the last few lines of file to cli.
+cat log.txt # Print whole file to cli.
+```
+
 
 ## Grafana
 
