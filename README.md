@@ -265,8 +265,8 @@ services:
         ### Optional settings ###
 
         - "autoscale.scaling_conflict_resolution=scale_up" # OPTIONAL. (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
-        - "autoscale.log_level=INFO"  # OPTIONAL. (INFO | VERBOSE | WARNING_AND_ERRORS_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
-        
+        - "autoscale.log_level=INFO"  # OPTIONAL. (INFO | VERBOSE | IMPORTANT_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
+
         ...
     ...
 ```
@@ -274,7 +274,7 @@ services:
 ### Logs
 
 #### Hint / Tip
-Deploy autoscale services with verbose log level to get more information or if you want to debug a potential error or want to see how the autoscaler actually works. (Remember to change back to INFO or WARNING_AND_ERRORS_ONLY in permanent production)
+Deploy autoscale services with verbose log level to get more information or if you want to debug a potential error or want to see how the autoscaler actually works. (Remember to change back to INFO or IMPORTANT_ONLY in permanent production)
 ```yaml
         - "autoscale.log_level=VERBOSE"
 ```
