@@ -3,14 +3,23 @@ version: "3.9"
 services:
 
   autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.4.2
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.6.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA_ROOT}/autoscaler_logs:/code/logs
     environment:
+      # Logging.
       - LOG_LEVEL=${AUTOSCALER_GLOBAL_LOG_LEVEL}
       - LOG_STYLE=${AUTOSCALER_LOG_STYLE}
       - TIMEZONE=${AUTOSCALER_TIMEZONE}
+      # Email status messages.
+      - EMAIL_ENABLED=${AUTOSCALER_EMAIL_ENABLED}
+      - EMAIL_SENDER_USER=${AUTOSCALER_EMAIL_SENDER_USER}
+      - EMAIL_SENDER_HOST=${AUTOSCALER_EMAIL_SENDER_HOST}
+      - EMAIL_SENDER_PORT=${AUTOSCALER_EMAIL_SENDER_PORT}
+      - EMAIL_RECIPIENTS_IMPORTANT_MSGS=${AUTOSCALER_EMAIL_RECIPIENTS_IMPORTANT_MSGS}
+      - EMAIL_RECIPIENTS_INFORMATION_MSGS=${AUTOSCALER_EMAIL_RECIPIENTS_INFORMATION_MSGS}
+      - EMAIL_RECIPIENTS_VERBOSE_MSGS=${AUTOSCALER_EMAIL_RECIPIENTS_VERBOSE_MSGS}
     networks:
       - monitoring
     deploy:

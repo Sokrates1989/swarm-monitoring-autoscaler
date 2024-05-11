@@ -195,6 +195,8 @@ services:
       labels: ### PLACE YOUR LABELS HERE ###
         ...
 
+        ### Common and required labels ###
+
         # Enable autoscaling for your service.
         - "autoscale=true"
 
@@ -202,7 +204,8 @@ services:
         - "autoscale.minimum_replicas=1"
         - "autoscale.maximum_replicas=3"
 
-        # What do you want to base scaling on?
+
+        ### What do you want to base scaling on ? ###
 
         # CPU?
         - "autoscale.cpu_upscale_threshold=80"
@@ -214,12 +217,29 @@ services:
         - "autoscale.memory_upscale_threshold=" 
         - "autoscale.memory_downscale_threshold=" 
 
+        
+        ### Optional settings ###
+
         # What do you want to do if one metric says scale down and the other says scale up/ otherwise?
         - "autoscale.scaling_conflict_resolution=scale_up"
 
-        # Individual log level for this service.
+        # Overwrite log level for this service.
         - "autoscale.log_level=INFO"
 
+
+        ### Additional status messages for this service ###
+
+        # Who additionally do you want to send status messages via email for this service?
+        - "autoscale.additional_email_recipients_important_msgs="
+        - "autoscale.additional_email_recipients_information_msgs="
+        - "autoscale.additional_email_recipients_verbose_msgs="
+
+        # Who additionally do you want to send what status messages via telegramm for this service?
+        - "autoscale.additional_telegram_recipients_important_msgs="
+        - "autoscale.additional_telegram_recipients_information_msgs="
+        - "autoscale.additional_telegram_recipients_verbose_msgs="
+
+        
         # For more info read below full explanation.
         ...
     ...
@@ -266,6 +286,21 @@ services:
 
         - "autoscale.scaling_conflict_resolution=scale_up" # OPTIONAL. (scale_up | scale_down | keep_replicas | adhere_to_memory | adhere_to_cpu) When metric1 says the service should scale up, but metric2 says "scale down" -> here you choose how you want to handle this szenario (default is scale_up, no need to define label in the default case, but advised )
         - "autoscale.log_level=INFO"  # OPTIONAL. (INFO | VERBOSE | IMPORTANT_ONLY) Service based custom log level. You can fine-tune the log level for each autoscale service. This can be handy for debugging or when you just set up a new service and want to see if everything works fine.
+
+
+        ### Additional status messages for this service ###
+
+        # Who additionally do you want to send status messages via email for this service?
+        # Comma seperated email addresses.
+        - "autoscale.additional_email_recipients_important_msgs=mail@example.com,mail2@example.com"
+        - "autoscale.additional_email_recipients_information_msgs=mail@example.com"
+        - "autoscale.additional_email_recipients_verbose_msgs="
+
+        # Who additionally do you want to send what status messages via telegramm for this service?
+        # Comma seperated telegram chatIDs.
+        - "autoscale.additional_telegram_recipients_important_msgs="
+        - "autoscale.additional_telegram_recipients_information_msgs="
+        - "autoscale.additional_telegram_recipients_verbose_msgs="
 
         ...
     ...
