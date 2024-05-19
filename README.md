@@ -130,8 +130,13 @@ cd /gluster_storage/swarm/administration/monitoring-autoscaler
 git clone https://github.com/Sokrates1989/swarm-monitoring-autoscaler.git .
 ```
 
-### Create secret in docker swarm
+### Create secrets in docker swarm
 ```bash
+# AUTOSCALER EMAIL SENDER PASSWORD.
+vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
+docker secret create SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD secret.txt 
+rm secret.txt
+
 # GRAFANA LOGIN.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_GRAFANA_PASSWORD secret.txt 

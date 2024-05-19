@@ -3,10 +3,12 @@ version: "3.9"
 services:
 
   autoscaler:
-    image: sokrates1989/swarm-autoscaler:DEBUG-0.6.8
+    image: sokrates1989/swarm-autoscaler:DEBUG-0.6.55
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DATA_ROOT}/autoscaler_logs:/code/logs
+    secrets:
+      - "SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD"
     environment:
       # Logging.
       - LOG_LEVEL=${AUTOSCALER_GLOBAL_LOG_LEVEL}
@@ -15,6 +17,8 @@ services:
       # Email status messages.
       - EMAIL_ENABLED=${AUTOSCALER_EMAIL_ENABLED}
       - EMAIL_SENDER_USER=${AUTOSCALER_EMAIL_SENDER_USER}
+      - EMAIL_SENDER_PASSWORD_FILE=/run/secrets/SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD
+      - EMAIL_SENDER_PASSWORD=${AUTOSCALER_EMAIL_SENDER_PASSWORD}
       - EMAIL_SENDER_HOST=${AUTOSCALER_EMAIL_SENDER_HOST}
       - EMAIL_SENDER_PORT=${AUTOSCALER_EMAIL_SENDER_PORT}
       - EMAIL_RECIPIENTS_IMPORTANT=${AUTOSCALER_EMAIL_RECIPIENTS_IMPORTANT}
@@ -197,6 +201,8 @@ networks:
     external: true
 
 secrets:
+  "SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD":
+    external: true
   "SWARM_MONITORING_GRAFANA_PASSWORD":
     external: true
   "SWARM_MONITORING_GRAFANA_SMTP_PASSWORD":
