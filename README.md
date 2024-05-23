@@ -130,9 +130,160 @@ cd /gluster_storage/swarm/administration/monitoring-autoscaler
 git clone https://github.com/Sokrates1989/swarm-monitoring-autoscaler.git .
 ```
 
+### Optional: Telegram status messages
+
+#### Create a telegram bot
+- Talk to [Botfather](https://t.me/BotFather) https://t.me/BotFather using telegram
+- Open the menu and select "/newbot"
+- Follow the instructions starting with giving your Bot a name such as "Swarm Autoscale Status Messages" or "autoscale_status_message_bot"
+- Obtain and copy the token to a save place. This is your "login-password" authenticating you to send messages via this bot
+
+#### Create chats and chat groups your new bot can talk to
+Your new bot cannot simply send messages to anyone who uses telegram. We must allow the bot to talk with [groups](#for-any-telegram-group) or [individual users](#for-the-current-telegram-user).
+
+##### For the current telegram user
+- In telegram start a new chat by searching for the bot name of your newly created bot: e.g.: "autoscale_status_message_bot"
+- Within the chat press "START" and write any message such as "Hi"
+- Go on at [Obtain chat ID of recipient](#obtain-chat-id-of-recipient)
+
+
+##### For any telegram group
+This is handy as you can easily create groups for services, information levels or clusters and then simply add or remove people who should have access to this information. This moves the administration to a much easier to manage location with a corresponding understandable user interface.
+
+- In telegram start a new empty group (e.g.: "Important Autoscaler Messages") DO NOT ADD THE THE BOT IN THE DIALOG DIRECTLY
+- Add the bot as a new member () (autoscale_status_message_bot)
+- Go on at [Obtain chat ID of recipient](#obtain-chat-id-of-recipient)
+
+
+##### Obtain chat ID of recipient
+- Build a url to retrieve the chat id after sending a message to the bot or the group chat above: [Link to retrieve chat id with telegram bot](#link-to-retrieve-chat-id-with-telegram-bot)
+- Open that url in a browser and look for the message you just sent to the bot and retrieve the chat id
+  - [For individual users](#example-return-for-indivdual-chat-url)
+  - [For groups](#example-return-for-group-chat-url)
+- Make a note of the chat ID and add it to the desired recipients of the log level that this user should receive
+
+
+##### Link to retrieve chat id with telegram bot
+```yml
+# Replace <YOUR_NEW_BOT_TOKEN_OBTAINED_FROM_BOTFATHER> with the bot token of your bot.
+https://api.telegram.org/bot<YOUR_NEW_BOT_TOKEN_OBTAINED_FROM_BOTFATHER>/getUpdates
+
+# It should now look somehting like this.
+https://api.telegram.org/bot1234567890:AAA0AAaaa_AAAA0A0aA0a0aAA00a0/getUpdates
+```
+
+
+##### Example return for indivdual [chat url](#link-to-retrieve-chat-id-with-telegram-bot)
+```json
+// Original return.
+{"ok":true,"result":[{"update_id":123456789,
+"message":{"message_id":2,"from":{"id":1234567890,"is_bot":false,"first_name":"FIRSTNAME","username":"USERNAME","language_code":"de"},"chat":{"id":1234567890,"first_name":"FIRSTNAME","username":"USERNAME","type":"private"},"date":1234567890,"text":"Hi"}}]}
+
+// Reformated to help you understand what to look out for.
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 123456789,
+      "message": 
+      {
+        "message_id": 2,
+        "from": 
+        {
+          "id": 123456789,
+          "is_bot": false,
+          "first_name": "FIRSTNAME",
+          "username": "USERNAME",
+          "language_code": "de"
+        },
+        "chat": // Chat object containing the id we are looking for
+        {
+          "id": 123456789, // <- This is the chat id we want
+          "first_name": "FIRSTNAME",
+          "username": "USERNAME",
+          "type": "private"
+        },
+        "date": 123456789,
+        "text": "Hi"
+      }
+    }
+  ]
+}
+```
+
+##### Example return for group [chat url](#link-to-retrieve-chat-id-with-telegram-bot)
+```json
+// Original return.
+{"ok":true,"result":[{"update_id":123456789,"message":{"message_id":3,"from":{"id":1234567890,"is_bot":false,"first_name":"Patrick","username":"Patrick_IT_Cologne","language_code":"de"},"chat":{"id":-1234567890,"title":"ImportantAutoscalerMessages","type":"group","all_members_are_administrators":true},"date":1234567890,"new_chat_participant":{"id":1234567890,"is_bot":true,"first_name":"SwarmAutoscaleStatusMessages","username":"autoscale_status_message_bot"},"new_chat_member":{"id":1234567890,"is_bot":true,"first_name":"SwarmAutoscaleStatusMessages","username":"autoscale_status_message_bot"},"new_chat_members":[{"id":1234567890,"is_bot":true,"first_name":"SwarmAutoscaleStatusMessages","username":"autoscale_status_message_bot"}]}}]
+}
+
+// Reformated to help you understand what to look out for.
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 123456789,
+      "message": 
+      {
+        "message_id": 3,
+        "from": 
+        {
+          "id": 1234567890,
+          "is_bot": false,
+          "first_name": "Patrick",
+          "username": "Patrick_IT_Cologne",
+          "language_code": "de"
+        },
+        "chat": // Chat object containing the id we are looking for
+        { 
+          "id": -1234567890, // <- This is the chat id we want (group ids often start with - (keep it as part of the id))
+          "title": "Important Autoscaler Messages",
+          "type": "group",
+          "all_members_are_administrators": true
+        },
+        "date": 1234567890,
+        "new_chat_participant": 
+        {
+          "id": 1234567890,
+          "is_bot": true,
+          "first_name": "Swarm Autoscale Status Messages",
+          "username": "autoscale_status_message_bot"
+        },
+        "new_chat_member":  // That is why we add the bot afterwards as we can see this message 
+        {
+          "id": 1234567890,
+          "is_bot": true,
+          "first_name": "Swarm Autoscale Status Messages",
+          "username": "autoscale_status_message_bot"
+        },
+        "new_chat_members": 
+        [
+          {
+              "id": 1234567890,
+              "is_bot": true,
+              "first_name": "Swarm Autoscale Status Messages",
+              "username": "autoscale_status_message_bot"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+
 ### Create secrets in docker swarm
+
+All Secrets must be created for the stack to work. If you are not indending to use them, you can just create the secret with an empty text.
 ```bash
-# AUTOSCALER EMAIL SENDER PASSWORD.
+# AUTOSCALER TELEGRAM SENDER BOT TOKEN for status messages.
+# This is the bot token the bot father gave when setting up status messages via telegram.
+vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
+docker secret create SWARM_MONITORING_AUTOSCALER_TELEGRAM_SENDER_BOT_TOKEN secret.txt 
+rm secret.txt
+
+# AUTOSCALER EMAIL SENDER PASSWORD for status mails.
+# This is the password you use to log in to your email provider to send mails (SMTP).
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD secret.txt 
 rm secret.txt
