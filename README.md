@@ -274,16 +274,18 @@ https://api.telegram.org/bot1234567890:AAA0AAaaa_AAAA0A0aA0a0aAA00a0/getUpdates
 
 ### Create secrets in docker swarm
 
-All Secrets must be created for the stack to work. If you are not indending to use them, you can just create the secret with an empty text.
+All Secrets must be created for the stack to work. If you are not indending to use them, you can just create the secret with the text "none".
 ```bash
 # AUTOSCALER TELEGRAM SENDER BOT TOKEN for status messages.
 # This is the bot token the bot father gave when setting up status messages via telegram.
+# Insert "none", if you do not want to use telegram status messages.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_AUTOSCALER_TELEGRAM_SENDER_BOT_TOKEN secret.txt 
 rm secret.txt
 
 # AUTOSCALER EMAIL SENDER PASSWORD for status mails.
 # This is the password you use to log in to your email provider to send mails (SMTP).
+# Insert "none", if you do not want to use email status messages.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_AUTOSCALER_EMAIL_SENDER_PASSWORD secret.txt 
 rm secret.txt
@@ -294,6 +296,7 @@ docker secret create SWARM_MONITORING_GRAFANA_PASSWORD secret.txt
 rm secret.txt
 
 # GRAFANA SMTP PASSWORD.
+# Insert "none", if you do not want to use grafana email status messages.
 vi secret.txt  # Then insert password (Make sure the password does not contain any backslashes "\") and save the file.
 docker secret create SWARM_MONITORING_GRAFANA_SMTP_PASSWORD secret.txt 
 rm secret.txt
