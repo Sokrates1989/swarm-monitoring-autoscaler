@@ -160,7 +160,7 @@ rm secret.txt
 # This is the server authentication token for the statechecker client to verify authentication.
 # Insert "none", if you do not want to use statechecker for autoscaler.
 vi secret.txt  # Then insert token and save the file.
-docker secret create SWARM_MONITORING_AUTOSCALER_STATECHECKER_SERVER_AUTHENTICATION_TOKEN secret.txt 
+docker secret create SWARM_MONITORING_AUTOSCALER_STATECHECKER_SERVER_AUTH_TOKEN secret.txt 
 rm secret.txt
 
 # AUTOSCALER STATECHECKER TOOL TOKEN.
@@ -174,7 +174,7 @@ rm secret.txt
 # This is the bot token the bot father gave when setting up status messages via telegram for statechecker bot.
 # Insert "none", if you do not want to use statechecker telegram status messages.
 vi secret.txt  # Then insert bot token and save the file.
-docker secret create SWARM_MONITORING_AUTOSCALER_STATECHECKER_TELEGRAM_SENDER_BOT_TOKEN secret.txt 
+docker secret create SWARM_MONITORING_AUTOSCALER_STATECHECKER_TELEGRAM_BOT_TOKEN secret.txt 
 rm secret.txt
 
 
