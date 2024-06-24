@@ -4,17 +4,18 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 
 ## Table of contents
 1. [Included packages](#included-packages)
-2. [Prerequisites](#prerequisites)
+2. [Backlog](#backlog)
+3. [Prerequisites](#prerequisites)
    - [Swarm Cronjobs](#swarm-cronjobs)
    - [If on a multiple master swarm](#if-on-a-swarm-cluster-with-multiple-masters)
      - [Option1: Glusterfs or any other distributed, arbitrarily scalable file system like Ceph (recommended)](#option1-glusterfs-or-any-other-distributed-arbitrarily-scalable-file-system-like-ceph-recommended)
      - [Option2: Constrain deployment to a specific node](#option2-constrain-deployment-to-a-specific-node)
    - [Optional: Traefik (recommended)](#optional-traefik-recommended)
-3. [First Setup](#first-setup)
+4. [First Setup](#first-setup)
    - [Optional: Telegram status messages](#optional-telegram-status-messages)
    - [Optional: Autoscaler State Checker](#optional-autoscaler-state-checker)
-4. [Deploy](#deploy)
-5. [Usage](#usage)
+5. [Deploy](#deploy)
+6. [Usage](#usage)
    - [AutoScaler](#autoscaler)
      - [Quick overview of labels](#autoscaler)
      - [Detailed information of labels](#full-explanation)
@@ -36,6 +37,31 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 - node-exporter
   - Monitors the host system
 
+
+# Backlog
+- StateChecker Client
+- More scaling options
+  - network (upstream/ downstream)
+  - Filesystem IO (read/ write)
+  - Response Time / Latency
+  - Request Rate (Throughput)
+  - Custom Metrics (whatever prometheus allows to retrieve) ? 
+    - queue length in message queues?
+    - number of active sessions?
+    - database connection pool usage?
+  - Database Metrics?
+    - query response time?
+    - connection pool usage?
+    - transaction rates?
+- Grafana pre built dashboards based on new scaling metrics
+- Go live/ make public
+  - Lizenz
+  - Chat GPT chat help
+    - Archived Chat?
+    - How to promote?
+  - Donations / Add to README
+    - Buy me a coffee
+    - Paypal 
 
 # Prerequisites
 ## Swarm Cronjobs
