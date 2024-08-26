@@ -272,6 +272,9 @@ https://api.telegram.org/bot1234567890:AAA0AAaaa_AAAA0A0aA0a0aAA00a0/getUpdates
 ```
 
 
+<details>
+<summary>How to find chat id from webpage response</summary>
+
 ##### Example return for indivdual [chat url](#link-to-retrieve-chat-id-with-telegram-bot)
 ```json
 // Original return.
@@ -369,6 +372,8 @@ https://api.telegram.org/bot1234567890:AAA0AAaaa_AAAA0A0aA0a0aAA00a0/getUpdates
   ]
 }
 ```
+</details>
+
 
 ### Optional: Autoscaler state checker
 The autoscale-state-checker will check, if the autoscaler is working as expected. It will send messages, in case it does not. After autoscaler completes its tasks, it will ping the state-checker-server, to tell it everything worked as expected.
