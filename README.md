@@ -26,8 +26,9 @@ Bundle of monitoring packages for docker swarm environments with autoscaler to s
 
 
 # Included Packages
-- autoscaler
+- [autoscaler](https://github.com/Sokrates1989/docker-swarm-autoscaler)
   - Scale swarm services based on cpu/memory consumption
+  - https://github.com/Sokrates1989/docker-swarm-autoscaler
 - grafana 
   - Visualize your swarm's metrics, optimized for autoscaler with various helpful pre-built dashboards
 - prometheus 
